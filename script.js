@@ -72,6 +72,7 @@ function generateURL(event) {
         bots: $bots.is(':checked'),
         hide_commands: $commands.is(':checked'),
         hide_badges: $badges.is(':checked'),
+        msgdelayms: $msgdelayms.val(),
         animate: $animate.is(':checked'),
         fade: ($fade_bool.is(':checked') ? $fade.val() : false),
         small_caps: $small_caps.is(':checked')
@@ -149,6 +150,7 @@ const $fade_seconds = $("#fade_seconds");
 const $commands = $("input[name='commands']");
 const $small_caps = $("input[name='small_caps']");
 const $badges = $("input[name='badges']");
+const $msgdelayms = $("input[name='msgdelayms']");
 const $size = $("select[name='size']");
 const $font = $("select[name='font']");
 const $stroke = $("select[name='stroke']");
