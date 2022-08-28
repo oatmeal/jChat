@@ -323,31 +323,11 @@ input[type="button"]:hover {
     margin: 1em;
 }
 
-#donation {
+#github {
     font-size: 0.7em;
     font-weight: 300;
     text-align: center;
     margin: 30px;
-}
-
-#donation .emote {
-    height: 30px;
-    width: 30px;
-    margin-bottom: -5px;
-    margin-right: 0;
-}
-
-#donation form {
-    margin: 15px;
-}
-
-#paypal {
-    width: 100px;
-    height: 25px;
-    border-radius: 20px;
-    background-color: rgb(255, 196, 57);
-    font-size: 0.9em;
-    font-weight: 600;
 }
 
 footer {
