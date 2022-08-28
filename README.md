@@ -20,3 +20,10 @@ It also comes with many fonts and styling options that can be combined as desire
 - Hide bots messages (on/off)
 - Hide commands messages (on/off)
 - !refreshoverlay to make newly added emotes appear (mods only)
+
+## Self Hosting
+
+1. Upload files
+1. Generate a twitch auth token via [implicit grant flow](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth#implicit-grant-flow)
+1. In `v2` folder create `credentials.js` file with content  
+   `const client_id = 'twitch-auth-token-------------';`
