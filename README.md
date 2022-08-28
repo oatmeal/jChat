@@ -21,7 +21,7 @@ It also comes with many fonts and styling options that can be combined as desire
 - Hide commands messages (on/off)
 - !refreshoverlay to make newly added emotes appear (mods only)
 
-## Self Hosting
+## Self Hosting / Local Files
 
 1. Upload files
 1. Generate a twitch auth token via <https://kcode.de/projects/jchat/host/> (source `host/index.html`, uses [implicit grant flow](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth#implicit-grant-flow))
