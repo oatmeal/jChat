@@ -781,6 +781,11 @@ Chat = {
     }
 };
 
-$(document).ready(function() {
-    Chat.connect($.QueryString.channel ? $.QueryString.channel.toLowerCase() : 'giambaj');
+$(document).ready(function () {
+    const channelname = $.QueryString.channel
+    if (channelname === undefined) {
+        document.body.innerText = 'ERROR: Missing channel name parameter `channel`';
+        return;
+    }
+    Chat.connect(channelname.toLowerCase());
 });
