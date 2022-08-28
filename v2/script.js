@@ -682,14 +682,6 @@ Chat = {
         }, 100);
     },
 
-    trollMessage: function() {
-        Chat.write('enkk', {
-            'badges': "broadcaster/1,subscriber/12,partner/1",
-            'color': "#e05b5b",
-            'display-name': "Enkk"
-        }, 'Grazie giambaJ per questa chat bellissima PepeLaugh PepoG');
-    },
-
     connect: function(channel) {
         Chat.info.channel = channel;
         var title = $(document).prop('title');
@@ -698,7 +690,6 @@ Chat = {
         Chat.load(function() {
             console.log('jChat: Connecting to IRC server...');
             var socket = new ReconnectingWebSocket('wss://irc-ws.chat.twitch.tv', 'irc', { reconnectInterval: 2000 });
-            if (Chat.info.channel === 'enkk') setInterval(Chat.trollMessage, 1800000);
 
             socket.onopen = function() {
                 console.log('jChat: Connected');
