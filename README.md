@@ -24,6 +24,6 @@ It also comes with many fonts and styling options that can be combined as desire
 ## Self Hosting
 
 1. Upload files
-1. Generate a twitch auth token via [implicit grant flow](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth#implicit-grant-flow)
+1. Generate a twitch auth token via <https://kcode.de/projects/jchat/host/> (source `host/index.html`, uses [implicit grant flow](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth#implicit-grant-flow))
 1. In `v2` folder create `credentials.js` file with content  
-   `const client_id = 'twitch-auth-token-------------';`
+   `const client_id = '--twitch-auth-token-----------';`
