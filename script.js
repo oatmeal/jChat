@@ -59,7 +59,10 @@ function capsUpdate(event) {
 function generateURL(event) {
     event.preventDefault();
 
-    const generatedUrl = 'https://www.giambaj.it/twitch/jchat/v2/?channel=' + $channel.val();
+    const loc = window.location;
+    const cleanPathBase = loc.pathname.replace(/\/[^\/]*$/, '');
+    const isFilePath = loc.protocol === 'file:';
+    const generatedUrl = `${loc.protocol}//${loc.host}${cleanPathBase}/v2/${isFilePath ? 'index.html' : ''}?channel=${$channel.val()}`;
 
     let data = {
         size: $size.val(),
