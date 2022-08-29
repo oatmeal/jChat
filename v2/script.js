@@ -27,25 +27,11 @@ function escapeHtml(message) {
         .replace(/(>)(?!\()/g, "&gt;");
 }
 
-/*function TwitchAPI(url) {
-    return $.getJSON(url + (url.search(/\?/) > -1 ? '&' : '?') + 'client_id=' + client_id);
-}*/
-
-/*function myAPI(url) {
-    return $.ajax({
-        beforeSend: function(request) {
-            request.setRequestHeader("Authorization", "Basic " + btoa(credentials));
-        },
-        dataType: "json",
-        url: "https://api.giambaj.it" + url
-    });
-}*/
-
 function myAPI(url) {
     return $.ajax({
         beforeSend: function(request) {
-            request.setRequestHeader("Client-Id", "i4yr1znz00t7v927pc29jqkla9jel9");
-            request.setRequestHeader("Authorization", "Bearer c93h4lxxb48nwgmlkls0649wntkn0q");
+            request.setRequestHeader("Client-Id", clientid);
+            request.setRequestHeader("Authorization", "Bearer " + token);
         },
         dataType: "json",
         url: "https://api.twitch.tv/helix" + url

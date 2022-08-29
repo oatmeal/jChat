@@ -17,7 +17,3 @@ function escapeHtml(message) {
         .replace(/(<)(?!3)/g, "&lt;")
         .replace(/(>)(?!\()/g, "&gt;");
 }
-
-function TwitchAPI(url) {
-    return $.getJSON(url + (url.search(/\?/) > -1 ? '&' : '?') + 'client_id=' + client_id);
-}

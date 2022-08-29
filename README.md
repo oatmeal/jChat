@@ -21,9 +21,11 @@ It also comes with many fonts and styling options that can be combined as desire
 - Hide commands messages (on/off)
 - !refreshoverlay to make newly added emotes appear (mods only)
 
-## Self Hosting / Local Files
+## Using Local Files / Self Hosting
 
-1. Upload files
-1. Generate a twitch auth token via <https://kcode.de/projects/jchat/host/> (source `host/index.html`, uses [implicit grant flow](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth#implicit-grant-flow))
-1. In `v2` folder create `credentials.js` file with content  
-   `const client_id = '--twitch-auth-token-----------';`
+See `v2/credentials.js`
+
+1. Generate a twitch auth token on <https://kcode.de/projects/jchat/host/>
+1. Set the valid token value in the `v2/credentials.js` file.
+
+The auth token page will also tell you for how long it is still valid. Once it expires you can generate and set a new one.
