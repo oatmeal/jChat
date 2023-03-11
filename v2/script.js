@@ -436,7 +436,7 @@ Chat = {
                 Object.entries(res.badges).forEach(badge => {
                     var userBadge = {
                         description: badge[1].title,
-                        url: 'https:' + badge[1].urls['4'],
+                        url: badge[1].urls['4'],
                         color: badge[1].color
                     };
                     if (!Chat.info.userBadges[nick].includes(userBadge)) Chat.info.userBadges[nick].push(userBadge);
