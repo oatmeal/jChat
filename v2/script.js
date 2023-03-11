@@ -488,6 +488,18 @@ Chat = {
             var $userInfo = $('<span></span>');
             $userInfo.addClass('user_info');
 
+            if (Chat.info.nicknameColor) var color = Chat.info.nicknameColor;
+            else {
+                if (typeof(info.color) === 'string') {
+                    if (tinycolor(info.color).getBrightness() <= 50) var color = tinycolor(info.color).lighten(30);
+                    else var color = info.color;
+                } else {
+                    const twitchColors = ["#FF0000", "#0000FF", "#008000", "#B22222", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57", "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"];
+                    var color = twitchColors[nick.charCodeAt(0) % 15];
+                }
+            }
+            $userInfo.css('color', color);
+
             // Writing badges
             if (Chat.info.hideBadges) {
                 if (typeof(info.badges) === 'string') {
@@ -549,17 +561,6 @@ Chat = {
             // Writing username
             var $username = $('<span></span>');
             $username.addClass('nick');
-            if (Chat.info.nicknameColor) var color = Chat.info.nicknameColor;
-            else {
-                if (typeof(info.color) === 'string') {
-                    if (tinycolor(info.color).getBrightness() <= 50) var color = tinycolor(info.color).lighten(30);
-                    else var color = info.color;
-                } else {
-                    const twitchColors = ["#FF0000", "#0000FF", "#008000", "#B22222", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57", "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"];
-                    var color = twitchColors[nick.charCodeAt(0) % 15];
-                }
-            }
-            $username.css('color', color);
             $username.html(info['display-name'] ? info['display-name'] : nick);
             $userInfo.append($username);
 
