@@ -352,7 +352,7 @@ Chat = {
                         Chat.info.seventvBadges = [];
                     });
 
-                $.getJSON('https://peaceful-eyrie-40908.herokuapp.com/https://api.chatterino.com/badges')
+                $.getJSON('https://api.chatterino.com/badges')
                     .done(function(res) {
                         Chat.info.chatterinoBadges = res.badges;
                     })
