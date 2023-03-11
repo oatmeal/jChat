@@ -417,13 +417,6 @@ Chat = {
 
     loadUserBadges: function(nick, userId) {
         Chat.info.userBadges[nick] = [];
-        if (nick === 'giambaj') {
-            var userBadge = {
-                description: 'jChat Dev',
-                url: 'https://www.giambaj.it/twitch/jchat/img/peepoHappyBadge.png'
-            };
-            if (!Chat.info.userBadges[nick].includes(userBadge)) Chat.info.userBadges[nick].push(userBadge);
-        }
         $.getJSON('https://api.frankerfacez.com/v1/user/' + nick).always(function(res) {
             if (res.badges) {
                 Object.entries(res.badges).forEach(badge => {
