@@ -34,7 +34,7 @@ function myAPI(url) {
         //     request.setRequestHeader("Authorization", "Bearer " + token);
         // },
         dataType: "json",
-        url: "https://twitch-api-proxy.5.workers.dev/" + url
+        url: "https://twitch-api-proxy.5.workers.dev" + url
     });
 }
 
