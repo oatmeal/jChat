@@ -38,6 +38,20 @@ function myAPI(url) {
     });
 }
 
+// helper function by Lazy_Luc
+// cf. https://discuss.dev.twitch.tv/t/cant-calculate-offset-from-the-emotes-tag-if-the-message-contains-emojis/28414/2
+function getCodepointToCodeunitMap(string) {
+    let array = [];
+    let count = 0;
+
+    for (let char of string) {
+        array.push(count);
+        count += char.length;
+    }
+
+    return array;
+};
+
 Chat = {
     info: {
         channel: null,
@@ -582,9 +596,8 @@ Chat = {
                 info.emotes.split('/').forEach(emoteData => {
                     var twitchEmote = emoteData.split(':');
                     var indexes = twitchEmote[1].split(',')[0].split('-');
-                    var emojis = new RegExp('[\u1000-\uFFFF]+', 'g');
-                    var aux = message.replace(emojis, ' ');
-                    var emoteCode = aux.substr(indexes[0], indexes[1] - indexes[0] + 1);
+                    var map = getCodepointToCodeunitMap(message);
+                    var emoteCode = message.substr(map[indexes[0]], map[indexes[1]] - map[indexes[0]] + 1);
                     //if (Chat.info.channel == "ilgabbrone" && twitchEmote[0] == "emotesv2_0c8fd12308e045caad1dacdc89fb4f15") twitchEmote[0] = "1840542" // :tf:
                     replacements[emoteCode] = '<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v2/' + twitchEmote[0] + '/default/dark/3.0" />';
                 });
