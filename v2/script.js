@@ -29,12 +29,12 @@ function escapeHtml(message) {
 
 function myAPI(url) {
     return $.ajax({
-        beforeSend: function(request) {
-            request.setRequestHeader("Client-Id", clientid);
-            request.setRequestHeader("Authorization", "Bearer " + token);
-        },
+        // beforeSend: function(request) {
+        //     request.setRequestHeader("Client-Id", clientid);
+        //     request.setRequestHeader("Authorization", "Bearer " + token);
+        // },
         dataType: "json",
-        url: "https://api.twitch.tv/helix" + url
+        url: "https://twitch-api-proxy.5.workers.dev/" + url
     });
 }
 
