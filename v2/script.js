@@ -610,24 +610,29 @@ Chat = {
             message = escapeHtml(message);
 
             if (info.bits && parseInt(info.bits) > 0) {
-                var bits = parseInt(info.bits);
-                var parsed = false;
-                for (cheerType of Object.entries(Chat.info.cheers)) {
-                    var regex = new RegExp(cheerType[0] + "\\d+\\s*", 'ig');
-                    if (message.search(regex) > -1) {
-                        message = message.replace(regex, '');
+                var chunks = message.split(' ');
 
+                for (let i = 0; i < chunks.length; i++) {
+                    var chunk = chunks[i];
+                    var parsed = false;
+                    for (cheerType of Object.entries(Chat.info.cheers)) {
                         if (!parsed) {
-                            var closest = 1;
-                            for (cheerTier of Object.keys(cheerType[1]).map(Number).sort((a, b) => a - b)) {
-                                if (bits >= cheerTier) closest = cheerTier;
-                                else break;
+                            var regex = new RegExp("^" + cheerType[0] + "(\\d+)$");
+                            var regexResult = regex.exec(chunk);
+                            if (regexResult) {
+                                var bits = parseInt(regexResult[1]);
+                                var closest = 1;
+                                for (cheerTier of Object.keys(cheerType[1]).map(Number).sort((a, b) => a - b)) {
+                                    if (bits >= cheerTier) closest = cheerTier;
+                                    else break;
+                                }
+                                chunks[i] = '<img class="cheer_emote" src="' + cheerType[1][closest].image + '" /><span class="cheer_bits" style="color: ' + cheerType[1][closest].color + ';">' + bits + '</span>';
+                                parsed = true;
                             }
-                            message = '<img class="cheer_emote" src="' + cheerType[1][closest].image + '" /><span class="cheer_bits" style="color: ' + cheerType[1][closest].color + ';">' + bits + '</span> ' + message;
-                            parsed = true;
                         }
                     }
                 }
+                message = chunks.join(' ');
             }
 
             var replacementKeys = Object.keys(replacements);
