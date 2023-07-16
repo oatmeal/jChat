@@ -55,8 +55,6 @@ function getCodepointToCodeunitMap(string) {
 Chat = {
     info: {
         channel: null,
-        channelID: undefined,
-        msgDelayMs: ('msgdelayms' in $.QueryString ? parseInt($.QueryString.msgdelayms) : null),
         animate: ('animate' in $.QueryString ? ($.QueryString.animate.toLowerCase() === 'true') : false),
         showBots: ('bots' in $.QueryString ? ($.QueryString.bots.toLowerCase() === 'true') : false),
         hideCommands: ('hide_commands' in $.QueryString ? ($.QueryString.hide_commands.toLowerCase() === 'true') : false),
@@ -134,7 +132,6 @@ Chat = {
 
     load: function(callback) {
         myAPI("/users?login=" + Chat.info.channel).done(function(res) {
-            //res = res['Message'];
             res = res.data[0]
             Chat.info.channelID = res.id;
             Chat.loadEmotes(Chat.info.channelID);
@@ -319,18 +316,20 @@ Chat = {
             }
 
             // Load badges
-            $.getJSON('https://badges.twitch.tv/v1/badges/global/display').done(function(global) {
-                Object.entries(global.badge_sets).forEach(badge => {
-                    Object.entries(badge[1].versions).forEach(v => {
-                        Chat.info.badges[badge[0] + ':' + v[0]] = v[1].image_url_4x;
+            myAPI('/chat/badges/global').done(function(res) {
+                res?.data.forEach(badge => {
+                    badge?.versions.forEach(version => {
+                        Chat.info.badges[badge.set_id + ':' + version.id] = version.image_url_4x;
                     });
                 });
-                $.getJSON('https://badges.twitch.tv/v1/badges/channels/' + encodeURIComponent(Chat.info.channelID) + '/display').done(function(channel) {
-                    Object.entries(channel.badge_sets).forEach(badge => {
-                        Object.entries(badge[1].versions).forEach(v => {
-                            Chat.info.badges[badge[0] + ':' + v[0]] = v[1].image_url_4x;
+
+                myAPI('/chat/badges?broadcaster_id=' + Chat.info.channelID).done(function(res) {
+                    res?.data.forEach(badge => {
+                        badge?.versions.forEach(version => {
+                            Chat.info.badges[badge.set_id + ':' + version.id] = version.image_url_4x;
                         });
                     });
+
                     $.getJSON('https://api.frankerfacez.com/v1/_room/id/' + encodeURIComponent(Chat.info.channelID)).done(function(res) {
                         if (res.room.moderator_badge) {
                             Chat.info.badges['moderator:1'] = 'https://cdn.frankerfacez.com/room-badge/mod/' + Chat.info.channel + '/4/rounded';
@@ -377,7 +376,6 @@ Chat = {
 
             // Load cheers images
             myAPI("/bits/cheermotes?broadcaster_id=" + Chat.info.channelID).done(function(res) {
-                //res = res['Message']
                 res = res.data
                 res.forEach(action => {
                     Chat.info.cheers[action.prefix] = {}
@@ -502,18 +500,6 @@ Chat = {
             var $userInfo = $('<span></span>');
             $userInfo.addClass('user_info');
 
-            if (Chat.info.nicknameColor) var color = Chat.info.nicknameColor;
-            else {
-                if (typeof(info.color) === 'string') {
-                    if (tinycolor(info.color).getBrightness() <= 50) var color = tinycolor(info.color).lighten(30);
-                    else var color = info.color;
-                } else {
-                    const twitchColors = ["#FF0000", "#0000FF", "#008000", "#B22222", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57", "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"];
-                    var color = twitchColors[nick.charCodeAt(0) % 15];
-                }
-            }
-            $userInfo.css('color', color);
-
             // Writing badges
             if (Chat.info.hideBadges) {
                 if (typeof(info.badges) === 'string') {
@@ -575,6 +561,17 @@ Chat = {
             // Writing username
             var $username = $('<span></span>');
             $username.addClass('nick');
+            if (Chat.info.nicknameColor) var color = Chat.info.nicknameColor;
+            else {
+                if (typeof(info.color) === 'string') {
+                    if (tinycolor(info.color).getBrightness() <= 50) var color = tinycolor(info.color).lighten(30);
+                    else var color = info.color;
+                } else {
+                    const twitchColors = ["#FF0000", "#0000FF", "#008000", "#B22222", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57", "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"];
+                    var color = twitchColors[nick.charCodeAt(0) % 15];
+                }
+            }
+            $username.css('color', color);
             $username.html(info['display-name'] ? info['display-name'] : nick);
             $userInfo.append($username);
 
@@ -598,7 +595,6 @@ Chat = {
                     var indexes = twitchEmote[1].split(',')[0].split('-');
                     var map = getCodepointToCodeunitMap(message);
                     var emoteCode = message.substr(map[indexes[0]], map[indexes[1]] - map[indexes[0]] + 1);
-                    //if (Chat.info.channel == "ilgabbrone" && twitchEmote[0] == "emotesv2_0c8fd12308e045caad1dacdc89fb4f15") twitchEmote[0] = "1840542" // :tf:
                     replacements[emoteCode] = '<img class="emote" src="https://static-cdn.jtvnw.net/emoticons/v2/' + twitchEmote[0] + '/default/dark/3.0" />';
                 });
             }
