@@ -70,6 +70,7 @@ function generateURL(event) {
         stroke: ($stroke.val() != '0' ? $stroke.val() : false),
         shadow: ($shadow.val() != '0' ? $shadow.val() : false),
         bots: $bots.is(':checked'),
+        block: $block.val(),
         hide_commands: $commands.is(':checked'),
         hide_badges: $badges.is(':checked'),
         msgdelayms: $msgdelayms.val(),
@@ -117,6 +118,8 @@ function resetForm(event) {
     $stroke.val('0');
     $shadow.val('0');
     $bots.prop('checked', false);
+    $block.val('');
+    $msgdelayms.val('');
     $commands.prop('checked', false);
     $badges.prop('checked', false);
     $animate.prop('checked', false);
@@ -144,6 +147,7 @@ const $generator = $("form[name='generator']");
 const $channel = $('input[name="channel"]');
 const $animate = $('input[name="animate"]');
 const $bots = $('input[name="bots"]');
+const $block = $("input[name='block']");
 const $fade_bool = $("input[name='fade_bool']");
 const $fade = $("input[name='fade']");
 const $fade_seconds = $("#fade_seconds");

@@ -68,7 +68,13 @@
                         </select>
                         <label for="font">Font</label>
                     </div>
-                    <br>
+                    <div class="">
+                        <label for="block">Hidden users:</label>
+                    </div>
+                    <div class="form_row left">
+                        <input type="text" name="block">
+                        &nbsp;<span style="font-size: 0.5em;">(separated by commas)</span>
+                    </div>
                     <div class="form_row left">
                         <input type="checkbox" name="bots">
                         <label for="bots">Show bots</label>
@@ -102,7 +108,6 @@
                             <option value="3">Large</option>
                         </select>
                     </div>
-                    <br>
                     <div class="form_row right">
                         <label for="animate">Animate</label>
                         <input type="checkbox" name="animate">
@@ -116,6 +121,10 @@
                         <label for="small_caps">Caps</label>
                         <input type="checkbox" name="small_caps">
                     </div>
+                    <div class="form_row right">
+                        <label for="msgdelayms" style="text-align: end;">Msg Delay [ms]</label>
+                        <input type="number" name="msgdelayms" autocomplete="off" value="">
+                    </div>
                 </div>
             </div>
 
@@ -124,7 +133,7 @@
                 <div id="example">
                     <div class="chat_line"><span class="user_info"><img class="badge special" src="https://cdn.frankerfacez.com/badge/3/4" style="background-color: rgb(117, 80, 0);"><img class="badge special" src="https://cdn.7tv.app/badge/60d5998fb0ac44b85331fe2b/3x"><img class="badge" src="https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3"><span class="nick" style="color: rgb(38, 255, 0);">giambaJ</span>
                         <span class="colon">:</span>
-                        </span><span class="message"><img class="cheer_emote" src="https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/100/4.gif"><span class="cheer_bits">100</span> Nice chat <img class="emote" src="https://cdn.betterttv.net/frankerfacez_emote/341767/4">                        <img class="emote" src="https://cdn.7tv.app/emote/6040aacfcf6746000db1034f/4x"></span>
+                        </span><span class="message"><img class="cheer_emote" src="https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/100/4.gif"><span class="cheer_bits">100</span> Nice chat <img class="emote" src="https://cdn.betterttv.net/frankerfacez_emote/341767/4">                        <img class="emote" src="https://cdn.7tv.app/emote/6040aacfcf6746000db1034f/4x.webp"></span>
                     </div>
                 </div>
                 <input type="submit" value="Generate">
@@ -141,7 +150,7 @@
 
     <section id="github">
         <p>jChat is free and open source software licensed under GPL 3.0.</p>
-        <p>The <a href="https://github.com/Kissaki/jChat">jChat project and sources are hosted on GitHub</a>.</p>
+        <p>The <a href="https://github.com/oatmeal/jChat">jChat project and sources are hosted on GitHub</a>.</p>
     </section>
 
     <footer>

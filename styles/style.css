@@ -94,7 +94,7 @@ form[name="generator"] {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    /* align-items: center; */
 }
 
 .form_row {

@@ -55,6 +55,7 @@ function getCodepointToCodeunitMap(string) {
 Chat = {
     info: {
         channel: null,
+        msgDelayMs: ('msgdelayms' in $.QueryString ? parseInt($.QueryString.msgdelayms) : null),
         animate: ('animate' in $.QueryString ? ($.QueryString.animate.toLowerCase() === 'true') : false),
         showBots: ('bots' in $.QueryString ? ($.QueryString.bots.toLowerCase() === 'true') : false),
         hideCommands: ('hide_commands' in $.QueryString ? ($.QueryString.hide_commands.toLowerCase() === 'true') : false),
@@ -662,7 +663,17 @@ Chat = {
             $message.html($message.html().trim());
             $chatLine.append($message);
 
+            if (Chat.info.msgDelayMs !== null) {
+                $chatLine.css('display', 'none');
+            }
+
             Chat.info.lines.push($chatLine.wrap('<div>').parent().html());
+
+            if (Chat.info.msgDelayMs !== null) {
+                setTimeout(() => {
+                    $('.chat_line[data-id=' + info.id + ']').css('display', '');
+                }, Chat.info.msgDelayMs);
+            }
         }
     },
 
