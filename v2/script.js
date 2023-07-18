@@ -81,6 +81,7 @@ Chat = {
     },
 
     loadEmotes: function(channelID) {
+        console.log('jChat: Refreshing emotes...');
         Chat.info.emotes = {};
         // Load BTTV, FFZ and 7TV emotes
         ['emotes/global', 'users/twitch/' + encodeURIComponent(channelID)].forEach(endpoint => {
@@ -136,6 +137,8 @@ Chat = {
             res = res.data[0]
             Chat.info.channelID = res.id;
             Chat.loadEmotes(Chat.info.channelID);
+            // reload emotes every 5 minutes (per BTTV API response headers)
+            setInterval(Chat.loadEmotes, 5 * 60000, Chat.info.channelID);
 
             // Load CSS
             switch (Chat.info.size) {
@@ -744,7 +747,6 @@ Chat = {
                                 });
                                 if (flag) {
                                     Chat.loadEmotes(Chat.info.channelID);
-                                    console.log('jChat: Refreshing emotes...');
                                     return;
                                 }
                             }
