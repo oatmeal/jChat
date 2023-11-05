@@ -71,7 +71,10 @@ Chat = {
         userBadges: {},
         ffzapBadges: null,
         bttvBadges: null,
-        seventvBadges: null,
+        // TODO? (low prio) add back 7TV badges?
+        // see e.g. https://github.com/SevenTV/API/blob/b2939b83e382232955eb56c8a3e78906b764b829/data/model/user.model.go#L46
+        // https://github.com/SevenTV/API/blob/b2939b83e382232955eb56c8a3e78906b764b829/data/model/cosmetic.model.go#L157
+        // seventvBadges: null,
         chatterinoBadges: null,
         cheers: {},
         lines: [],
@@ -82,7 +85,7 @@ Chat = {
 
     loadEmotes: function(channelID) {
         console.log('jChat: Refreshing emotes...');
-        console.log(channelID);
+
         Chat.info.emotes = {};
         // Load BTTV, FFZ and 7TV emotes
         // TODO? BTTV personal emotes; cf. https://github.com/night/betterttv/blob/master/src/modules/emotes/personal-emotes.js
@@ -133,9 +136,7 @@ Chat = {
                 emotes.forEach(emote => {
                     Chat.info.emotes[emote.name] = {
                         id: emote.id, // not used?
-                        // image: emote.urls[emote.urls.length - 1][1],
                         image: 'https://' + emote.data.host.url + '/' + (emote.data.animated ? emote.data.host.files[emote.data.host.files.length - 2].name : emote.data.host.files[emote.data.host.files.length - 1].name),
-                        // zeroWidth: emote.visibility_simple.includes("ZERO_WIDTH")
                         zeroWidth: emote.flags === 1
                     };
                 });
@@ -373,14 +374,6 @@ Chat = {
                         Chat.info.bttvBadges = [];
                     });
 
-                $.getJSON('https://api.7tv.app/v2/badges?user_identifier=login')
-                    .done(function(res) {
-                        Chat.info.seventvBadges = res.badges;
-                    })
-                    .fail(function() {
-                        Chat.info.seventvBadges = [];
-                    });
-
                 $.getJSON('https://api.chatterino.com/badges')
                     .done(function(res) {
                         Chat.info.chatterinoBadges = res.badges;
@@ -480,17 +473,6 @@ Chat = {
                     };
                     if (!Chat.info.userBadges[nick].includes(userBadge)) Chat.info.userBadges[nick].push(userBadge);
                 }
-            });
-            Chat.info.seventvBadges.forEach(badge => {
-                badge.users.forEach(user => {
-                    if (user === nick) {
-                        var userBadge = {
-                            description: badge.tooltip,
-                            url: badge.urls[2][1]
-                        };
-                        if (!Chat.info.userBadges[nick].includes(userBadge)) Chat.info.userBadges[nick].push(userBadge);
-                    }
-                });
             });
             Chat.info.chatterinoBadges.forEach(badge => {
                 badge.users.forEach(user => {
@@ -790,7 +772,7 @@ Chat = {
                             }
 
                             if (!Chat.info.hideBadges) {
-                                if (Chat.info.bttvBadges && Chat.info.seventvBadges && Chat.info.chatterinoBadges && Chat.info.ffzapBadges && !Chat.info.userBadges[nick]) Chat.loadUserBadges(nick, message.tags['user-id']);
+                                if (Chat.info.bttvBadges && Chat.info.chatterinoBadges && Chat.info.ffzapBadges && !Chat.info.userBadges[nick]) Chat.loadUserBadges(nick, message.tags['user-id']);
                             }
 
                             Chat.write(nick, message.tags, message.params[1]);
