@@ -82,8 +82,11 @@ Chat = {
 
     loadEmotes: function(channelID) {
         console.log('jChat: Refreshing emotes...');
+        console.log(channelID);
         Chat.info.emotes = {};
         // Load BTTV, FFZ and 7TV emotes
+        // TODO? BTTV personal emotes; cf. https://github.com/night/betterttv/blob/master/src/modules/emotes/personal-emotes.js
+        // TODO: emote modifiers!
         ['emotes/global', 'users/twitch/' + encodeURIComponent(channelID)].forEach(endpoint => {
             $.getJSON('https://api.betterttv.net/3/cached/frankerfacez/' + endpoint).done(function(res) {
                 res.forEach(emote => {
@@ -119,13 +122,21 @@ Chat = {
             });
         });
 
-        ['emotes/global', 'users/' + encodeURIComponent(channelID) + '/emotes'].forEach(endpoint => {
-            $.getJSON('https://api.7tv.app/v2/' + endpoint).done(function(res) {
-                res.forEach(emote => {
+        ['emote-sets/global', 'users/twitch/' + encodeURIComponent(channelID)].forEach(endpoint => {
+            $.getJSON('https://7tv.io/v3/' + endpoint).done(function(res) {
+                let emotes = null;
+                if (res.emotes) {
+                    emotes = res.emotes;
+                } else {
+                    emotes = res.emote_set.emotes;
+                }
+                emotes.forEach(emote => {
                     Chat.info.emotes[emote.name] = {
-                        id: emote.id,
-                        image: emote.urls[emote.urls.length - 1][1],
-                        zeroWidth: emote.visibility_simple.includes("ZERO_WIDTH")
+                        id: emote.id, // not used?
+                        // image: emote.urls[emote.urls.length - 1][1],
+                        image: 'https://' + emote.data.host.url + '/' + (emote.data.animated ? emote.data.host.files[emote.data.host.files.length - 2].name : emote.data.host.files[emote.data.host.files.length - 1].name),
+                        // zeroWidth: emote.visibility_simple.includes("ZERO_WIDTH")
+                        zeroWidth: emote.flags === 1
                     };
                 });
             });
@@ -133,6 +144,7 @@ Chat = {
     },
 
     load: function(callback) {
+        // TODO: notify user if we can't get data from API?
         myAPI("/users?login=" + Chat.info.channel).done(function(res) {
             res = res.data[0]
             Chat.info.channelID = res.id;
