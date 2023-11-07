@@ -13,11 +13,15 @@
     <p>Current: <input type="text" id="tokenvalue" size="30"/></p>
     <p>Status: <span id="tokenstatus"></span></p>
 
+    <input type="checkbox" id="auto" name="auto" />
+    <label for="auto">Automatically redirect to auth page when countdown expires (only works when delay &lt; 1d; refresh page after setting).</label>
+
     <h2>jChat Setup</h2>
     <p>Set the generated token value in <code>v2/credentials.js</code>.</p>
 
     <script>
         // Registered application Client ID https://dev.twitch.tv/console/apps as per https://dev.twitch.tv/docs/authentication/register-app
+        // This ID only works for kcode.de!
         const client_id = 'hapfaz885zvl3hwti61nkojayftqzw'
 
         const loc = window.location
@@ -61,8 +65,20 @@
         function readToken() {
             return window.localStorage.getItem('jchat/twitch/access_token')
         }
+        function storeCheckbox(el) {
+            window.localStorage.setItem('jchat/twitch/auto', el.checked)
+            //document.cookie = 'access_token=' + token + '; SameSite=Strict; Secure; expires=' + new Date(9999, 99).toUTCString()
+        }
+        /** @returns {null|string} */
+        function readCheckbox() {
+            return window.localStorage.getItem('jchat/twitch/auto')
+        }
 
         async function init() {
+            const autoCheckbox = document.getElementById("auto");
+            autoCheckbox.checked = readCheckbox() === "true";
+            autoCheckbox.onclick = () => storeCheckbox(autoCheckbox);
+
             let newToken = ParseToken()
             if (newToken !== null) {
                 storeToken(newToken)
@@ -73,12 +89,16 @@
 
             document.getElementById('tokenstatus').innerText = 'Checking…'
             const validateResult = await ValidateToken(token)
+            let timer = null;
             if (validateResult == null) {
                 document.getElementById('tokenstatus').innerHTML = 'Requires Auth! <a href="javascript:AuthorizeToken()">Authorize here!</a>'
                 return
+            } else if (autoCheckbox.checked && validateResult < 31536000) {
+                timer = setTimeout(AuthorizeToken, 1000 * validateResult);
             }
 
-            document.getElementById('tokenstatus').innerText = `VALID - expires in ${validateResult} seconds (${Math.ceil(validateResult / 60 / 60 / 24)} days)`
+            document.getElementById('tokenstatus').innerText = `VALID - expires in ${validateResult} seconds (${Math.floor(validateResult / 60 / 60 / 24)} days)${timer !== null ? " (will automatically redirect)" : ""}`
+
         }
         init()
     </script>
