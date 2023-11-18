@@ -67,6 +67,8 @@ Chat = {
         shadow: ('shadow' in $.QueryString ? parseInt($.QueryString.shadow) : false),
         smallCaps: ('small_caps' in $.QueryString ? ($.QueryString.small_caps.toLowerCase() === 'true') : false),
         emotes: {},
+        // list of emotes for each endpoint; used to update emotes
+        emotesByEndpoint: {},
         badges: {},
         userBadges: {},
         ffzapBadges: null,
@@ -86,12 +88,34 @@ Chat = {
     loadEmotes: function(channelID) {
         console.log('jChat: Refreshing emotes...');
 
-        Chat.info.emotes = {};
+        // this function should only be called if we successfully got new emote data from the endpoint
+        // since each endpoint can fail, we update the emotes from each endpoint only if it succeeds
+        function updateEmoteData(endpointPrefix, endpoint, emoteCodes) {
+            const endpointKey = endpointPrefix + endpoint;
+            // clear stale data in info.emotes from emotesByEndpoint (emote codes from last successful update)
+            if (Chat.info.emotesByEndpoint[endpointKey]) {
+                Chat.info.emotesByEndpoint[endpointKey].forEach(code => {
+                    delete Chat.info.emotes[code];
+                });
+            }
+            Chat.info.emotesByEndpoint[endpointKey] = [];
+
+            emoteCodes.forEach(([code, emoteData]) => {
+                // update emotesByEndpoint
+                Chat.info.emotesByEndpoint[endpointKey].push(code);
+                // update info.emotes
+                Chat.info.emotes[code] = emoteData;
+            });
+            console.log('jChat: Successfully updated emotes from', endpointKey);
+
+        }
+
         // Load BTTV, FFZ and 7TV emotes
         // TODO? BTTV personal emotes; cf. https://github.com/night/betterttv/blob/master/src/modules/emotes/personal-emotes.js
         // TODO: emote modifiers!
         ['emotes/global', 'users/twitch/' + encodeURIComponent(channelID)].forEach(endpoint => {
             $.getJSON('https://api.betterttv.net/3/cached/frankerfacez/' + endpoint).done(function(res) {
+                const emoteCodes = [];
                 res.forEach(emote => {
                     if (emote.images['4x']) {
                         var imageUrl = emote.images['4x'];
@@ -100,46 +124,53 @@ Chat = {
                         var imageUrl = emote.images['2x'] || emote.images['1x'];
                         var upscale = true;
                     }
-                    Chat.info.emotes[emote.code] = {
+                    emoteCodes.push([emote.code, {
                         id: emote.id,
                         image: imageUrl,
                         upscale: upscale
-                    };
+                    }]);
                 });
+                updateEmoteData('ffz/', endpoint, emoteCodes);
             });
         });
 
         ['emotes/global', 'users/twitch/' + encodeURIComponent(channelID)].forEach(endpoint => {
             $.getJSON('https://api.betterttv.net/3/cached/' + endpoint).done(function(res) {
+                const emoteCodes = [];
                 if (!Array.isArray(res)) {
                     res = res.channelEmotes.concat(res.sharedEmotes);
                 }
                 res.forEach(emote => {
-                    Chat.info.emotes[emote.code] = {
+                    emoteCodes.push([emote.code, {
                         id: emote.id,
                         image: 'https://cdn.betterttv.net/emote/' + emote.id + '/3x',
                         zeroWidth: ["5e76d338d6581c3724c0f0b2", "5e76d399d6581c3724c0f0b8", "567b5b520e984428652809b6", "5849c9a4f52be01a7ee5f79d", "567b5c080e984428652809ba", "567b5dc00e984428652809bd", "58487cc6f52be01a7ee5f205", "5849c9c8f52be01a7ee5f79e"].includes(emote.id)
                             // "5e76d338d6581c3724c0f0b2" => cvHazmat, "5e76d399d6581c3724c0f0b8" => cvMask, "567b5b520e984428652809b6" => SoSnowy, "5849c9a4f52be01a7ee5f79d" => IceCold, "567b5c080e984428652809ba" => CandyCane, "567b5dc00e984428652809bd" => ReinDeer, "58487cc6f52be01a7ee5f205" => SantaHat, "5849c9c8f52be01a7ee5f79e" => TopHat
-                    };
+                    }]);
                 });
+                updateEmoteData('bttv/', endpoint, emoteCodes);
             });
         });
 
         ['emote-sets/global', 'users/twitch/' + encodeURIComponent(channelID)].forEach(endpoint => {
             $.getJSON('https://7tv.io/v3/' + endpoint).done(function(res) {
-                let emotes = null;
-                if (res.emotes) {
-                    emotes = res.emotes;
+                const emoteCodes = [];
+                const emotes = res.emotes || (res.emote_set && res.emote_set.emotes);
+                if (emotes) {
+                    emotes.forEach(emote => {
+                        emoteCodes.push([emote.name, {
+                            id: emote.id, // not used?
+                            image: 'https://' + emote.data.host.url + '/' +
+                                (emote.data.animated ?
+                                    emote.data.host.files[emote.data.host.files.length - 2].name :
+                                    emote.data.host.files[emote.data.host.files.length - 1].name),
+                            zeroWidth: emote.flags === 1
+                        }]);
+                    });
+                    updateEmoteData('7tv/', endpoint, emoteCodes);
                 } else {
-                    emotes = res.emote_set.emotes;
+                    console.warn("jChat: Bad response from 7tv", endpoint + ":", res);
                 }
-                emotes.forEach(emote => {
-                    Chat.info.emotes[emote.name] = {
-                        id: emote.id, // not used?
-                        image: 'https://' + emote.data.host.url + '/' + (emote.data.animated ? emote.data.host.files[emote.data.host.files.length - 2].name : emote.data.host.files[emote.data.host.files.length - 1].name),
-                        zeroWidth: emote.flags === 1
-                    };
-                });
             });
         });
     },
